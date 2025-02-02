@@ -59,10 +59,7 @@ nnoremap <C-k> :cprev<CR>
 
 " Enable Treesitter Syntax Highlighting
 lua << EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "python", "zig", "lua", "go" },
-  highlight = { enable = true }
-}
+
 EOF
 
 " LSP Configurations
