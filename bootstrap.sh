@@ -71,9 +71,9 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 fi
-if [ "$SHELL" != "$(which zsh)" ]; then
-    sudo chsh -s "$(which zsh)"
-fi
+# if [ "$SHELL" != "$(which zsh)" ]; then
+#    sudo chsh -s "$(which zsh)"
+# fi
 echo "ZSH Installed"
 }
 
@@ -90,6 +90,7 @@ install_tmux_plugin_manager() {
 link_dotfiles() {
   echo "Linking dotfiles..."
   # cp ./.vimrc ~/.vimrc
+  cp -r ./.config/nvim ~/.config/
   cp ./.tmux.conf ~/.tmux.conf
   echo "Dotfiles linked successfully."
 }
