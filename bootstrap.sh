@@ -3,29 +3,6 @@
 # First the essentials
 
 echo "Starting dotfiles setup..."
-# apt update && 
-#   apt install -y \
-#   curl \
-#   wget \
-#   zsh \
-#   jq \
-#   tree \
-#   neovim \
-#   git \
-#   tmux \
-#   fzf \
-#   ripgrep
-  #TODO: timezone neovim
-# TODO: Export environment and trigger reload
-# Homebrew specific packages
-# bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-# brew install wget
-# brew install zsh
-# brew install docker
-# brew install git 
-# brew install jq
-# brew install tree
-# brew install neovim
 
 # Detect OS
 OS=$(uname -s)
@@ -36,21 +13,21 @@ install_packages() {
     echo "Using Linux"
     if [ -x "$(command -v apt)" ]; then
       echo "Using apt"
-      apt update
-      apt install -y \
+      sudo apt update
+      sudo apt install -y \
         curl \
         wget \
         zsh \
         jq \
         tree \
-        neovim \
         git \
         tmux \
         fzf \
         ripgrep
-        # build-essential gcc g++ make cmake \
-        # python3 python3-pip python3-venv \
-        # nodejs npm
+
+      tar xzvf nvim-linux-x86_64.tar.gz
+      mv nvim-linux-x86_64 "$HOME"
+      export PATH="$PATH:$HOME/nvim-linux-x86_64/bin/nvim"
     elif [ -x "$(command -v dnf)" ]; then
       sudo dnf install -y neovim
     elif [ -x "$(command -v pacman)" ]; then
@@ -89,13 +66,15 @@ install_packages() {
 install_zsh() {
 export RUNZSH=no
 export CHSH=no
+echo "Installing zsh"
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 fi
 if [ "$SHELL" != "$(which zsh)" ]; then
-    chsh -s "$(which zsh)"
+    sudo chsh -s "$(which zsh)"
 fi
+echo "ZSH Installed"
 }
 
 install_tmux_plugin_manager() {
@@ -112,22 +91,9 @@ link_dotfiles() {
   echo "Linking dotfiles..."
   # cp ./.vimrc ~/.vimrc
   cp ./.tmux.conf ~/.tmux.conf
-  mkdir -p ~/.config/nvim
-  cp ./.config/nvim/init.vim ~/.config/nvim/init.vim
   echo "Dotfiles linked successfully."
 }
 
-install_neovim_plugins() {
-  echo "Installing Neovim plugins..."
-  nvim +PlugInstall +qall
-  echo "Neovim plugins installed successfully."
-}
-
-install_zig_latest() {
-  echo "Installing Zig Master branch..."
-  bash -c zig_install.sh
-  echo "Zig Installed"
-}
 
 install_nvim_plug(){
   # Install vim-plug if not already installed
@@ -136,7 +102,7 @@ if [ ! -f "${HOME}/.local/share/nvim/site/autoload/plug.vim" ]; then
     curl -fLo "${HOME}/.local/share/nvim/site/autoload/plug.vim" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
-
+mkdir -p "$HOME/.local/share/nvim/plugged"
 # Ensure Neovim installs plugins automatically
 nvim --headless -c "PlugInstall" -c "qall"
 
@@ -155,10 +121,6 @@ main() {
   install_zsh
   link_dotfiles
 
-  install_nvim_plug
-  # install_python_tools
-  # install_tmux_plugin_manager
-  #install_neovim_plugins
   echo "Setup completed successfully!"
 }
 
